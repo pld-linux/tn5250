@@ -1,4 +1,5 @@
 Summary:	5250 Telnet protocol and Terminal
+Summary(pl):	Obs≥uga protoko≥u i terminal Telnet 5250
 Name:		tn5250
 Version:	0.16.1
 Release:	3
@@ -10,16 +11,24 @@ Url:		http://www.blarg.net/~mmadore/5250.html
 Source0:	http://www.nacs.net/~jasonf/%{name}-%{version}.tar.gz
 Patch0:		%{name}-updates_to_0.16.1.patch
 Patch1:		%{name}-ncurses.patch
-BuildRequires:	ncurses-devel
-BuildRequires:	automake
 BuildRequires:	autoconf
+BuildRequires:	automake
+BuildRequires:	libtool
+BuildRequires:	ncurses-devel
+Requires(post):	/sbin/ldconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
 tn5250 is an implementation of the 5250 Telnet protocol. It provide
 5250 library and 5250 terminal emulation.
 
+%description -l pl
+tn5250 to implementacja protoko≥u Telnet 5250. Zawiera bibliotekÍ 5250
+i emulator terminala 5250.
+
 %package devel
+Summary:	Development tools for 5250 protocol
+Summary(pl):	Pakiet dla programisty protoko≥u 5250
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
 Group(es):	Desarrollo/Bibliotecas
@@ -28,12 +37,17 @@ Group(pl):	Programowanie/Biblioteki
 Group(pt_BR):	Desenvolvimento/Bibliotecas
 Group(ru):	Ú¡⁄“¡¬œ‘À¡/‚…¬Ã…œ‘≈À…
 Group(uk):	Úœ⁄“œ¬À¡/‚¶¬Ã¶œ‘≈À…
-Summary:	development tools for 5250 protocol.
+Requires:	%{name} = %{version}
 
 %description devel
-Libraires and include to use lib5250.
+Header files to use lib5250.
+
+%description devel -l pl
+Pliki nag≥Ûwkowe do korzystania z lib5250.
 
 %package static
+Summary:	Static libraries for 5250 protocol
+Summary(pl):	Statyczne biblioteki do protoko≥u 5250
 Group:		Development/Libraries
 Group(de):	Entwicklung/Libraries
 Group(es):	Desarrollo/Bibliotecas
@@ -42,10 +56,13 @@ Group(pl):	Programowanie/Biblioteki
 Group(pt_BR):	Desenvolvimento/Bibliotecas
 Group(ru):	Ú¡⁄“¡¬œ‘À¡/‚…¬Ã…œ‘≈À…
 Group(uk):	Úœ⁄“œ¬À¡/‚¶¬Ã¶œ‘≈À…
-Summary:	static libraries for 5250 protocol.
+Requires:	%{name}-devel = %{version}
 
 %description static
-Static libraires to use lib5250.
+Static libraries to use lib5250.
+
+%description static -l pl
+Statyczne biblioteki lib5250.
 
 %prep
 %setup -q 
@@ -58,7 +75,7 @@ aclocal
 autoheader
 automake -a -c
 autoconf
-%define	rpmcflags	%{?debug:%debugcflags}%{!?debug:%optflags} -I/usr/include/ncurses
+CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure
 %{__make}
 
