@@ -6,6 +6,7 @@ Release:	1
 License:	GPL
 Group:		Applications/Networking
 Source0:	http://dl.sourceforge.net/tn5250/%{name}-%{version}.tar.gz
+# Source0-md5:	2f9ef4509198e96bb184577fdddfce6d
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-no_libnsl.patch
 URL:		http://tn5250.sourceforge.net/
