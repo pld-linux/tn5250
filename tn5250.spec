@@ -5,7 +5,7 @@ Version:	0.16.5
 Release:	1
 License:	GPL
 Group:		Applications/Networking
-Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/tn5250/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/tn5250/%{name}-%{version}.tar.gz
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-no_libnsl.patch
 URL:		http://tn5250.sourceforge.net/
