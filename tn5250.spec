@@ -57,7 +57,7 @@ Statyczne biblioteki lib5250.
 libtoolize -c -f
 aclocal
 autoheader
-automake -a -c
+automake -a -c -f
 autoconf
 CFLAGS="%{rpmcflags} -I%{_includedir}/ncurses"
 %configure
