@@ -5,10 +5,10 @@ Version:	0.16.1
 Release:	3
 License:	GPL
 Group:		Applications/Networking
-Url:		http://www.blarg.net/~mmadore/5250.html
-Source0:	http://www.nacs.net/~jasonf/%{name}-%{version}.tar.gz
+Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/tn5250/%{name}-%{version}.tar.gz
 Patch0:		%{name}-updates_to_0.16.1.patch
 Patch1:		%{name}-ncurses.patch
+URL:		http://tn5250.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool
@@ -54,7 +54,7 @@ Statyczne biblioteki lib5250.
 %patch1 -p1
 
 %build
-libtoolize -c -f
+%{__libtoolize}
 aclocal
 autoheader
 %{__automake}
@@ -74,8 +74,6 @@ install linux/5250.terminfo $RPM_BUILD_ROOT%{_datadir}/%{name}
 #install linux/*.map $RPM_BUILD_ROOT%{_datadir}/%{name}
 #install Xdefaults $RPM_BUILD_ROOT%{_datadir}/%{name}/xt5250.keys
 
-gzip -9nf AUTHORS ChangeLog INSTALL NEWS README* TODO linux/README
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -87,7 +85,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc *.gz linux/README.gz
+%doc AUTHORS ChangeLog INSTALL NEWS README* TODO linux/README
 %attr(755,root,root) %{_bindir}/*5250
 %attr(755,root,root) %{_bindir}/*5250d
 %attr(755,root,root) %{_bindir}/tn3270d
