@@ -5,7 +5,7 @@ Version:	0.16.1
 Release:	3
 License:	GPL
 Group:		Applications/Networking
-Url:		http://www.blarg.net/~mmadore/5250.html 
+Url:		http://www.blarg.net/~mmadore/5250.html
 Source0:	http://www.nacs.net/~jasonf/%{name}-%{version}.tar.gz
 Patch0:		%{name}-updates_to_0.16.1.patch
 Patch1:		%{name}-ncurses.patch
@@ -49,7 +49,7 @@ Static libraries to use lib5250.
 Statyczne biblioteki lib5250.
 
 %prep
-%setup -q 
+%setup -q
 %patch0 -p1
 %patch1 -p1
 
@@ -59,7 +59,7 @@ aclocal
 autoheader
 automake -a -c
 autoconf
-CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
+CFLAGS="%{rpmcflags} -I%{_includedir}/ncurses"
 %configure
 %{__make}
 
@@ -80,7 +80,7 @@ gzip -9nf AUTHORS ChangeLog INSTALL NEWS README* TODO linux/README
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/usr/bin/tic %{_datadir}/%{name}/5250.terminfo >/dev/null 2>&1 
+/usr/bin/tic %{_datadir}/%{name}/5250.terminfo >/dev/null 2>&1
 /sbin/ldconfig
 
 %postun -p /sbin/ldconfig
@@ -102,7 +102,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_libdir}/lib*.so
 %attr(755,root,root) %{_bindir}/*-config
 %{_includedir}/*
-%{_datadir}/aclocal/*
+%{_aclocaldir}/*
 
 %files static
 %defattr(644,root,root,755)
