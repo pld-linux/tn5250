@@ -5,8 +5,6 @@ Version:	0.16.1
 Release:	3
 License:	GPL
 Group:		Applications/Networking
-Group(de):	Applikationen/Netzwerkwesen
-Group(pl):	Aplikacje/Sieciowe
 Url:		http://www.blarg.net/~mmadore/5250.html 
 Source0:	http://www.nacs.net/~jasonf/%{name}-%{version}.tar.gz
 Patch0:		%{name}-updates_to_0.16.1.patch
@@ -30,13 +28,6 @@ i emulator terminala 5250.
 Summary:	Development tools for 5250 protocol
 Summary(pl):	Pakiet dla programisty protokoЁu 5250
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name} = %{version}
 
 %description devel
@@ -49,13 +40,6 @@ Pliki nagЁСwkowe do korzystania z lib5250.
 Summary:	Static libraries for 5250 protocol
 Summary(pl):	Statyczne biblioteki do protokoЁu 5250
 Group:		Development/Libraries
-Group(de):	Entwicklung/Libraries
-Group(es):	Desarrollo/Bibliotecas
-Group(fr):	Development/Librairies
-Group(pl):	Programowanie/Biblioteki
-Group(pt_BR):	Desenvolvimento/Bibliotecas
-Group(ru):	Разработка/Библиотеки
-Group(uk):	Розробка/Б╕бл╕отеки
 Requires:	%{name}-devel = %{version}
 
 %description static
