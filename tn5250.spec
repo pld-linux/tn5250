@@ -2,7 +2,7 @@ Summary:	5250 Telnet protocol and Terminal
 Summary(pl):	Obs³uga protoko³u i terminal Telnet 5250
 Name:		tn5250
 Version:	0.16.4
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/Networking
 Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/tn5250/%{name}-%{version}.tar.gz
@@ -70,13 +70,8 @@ install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
-#install linux/5250.tcap $RPM_BUILD_ROOT%{_datadir}/%{name}
-#install linux/5250.terminfo $RPM_BUILD_ROOT%{_datadir}/%{name}
 install -D linux/5/5250 $RPM_BUILD_ROOT%{_datadir}/terminfo/5/5250
 install -D linux/x/xterm-5250 $RPM_BUILD_ROOT%{_datadir}/terminfo/x/xterm-5250
-
-#install linux/*.map $RPM_BUILD_ROOT%{_datadir}/%{name}
-#install Xdefaults $RPM_BUILD_ROOT%{_datadir}/%{name}/xt5250.keys
 
 %clean
 rm -rf $RPM_BUILD_ROOT
