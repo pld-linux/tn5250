@@ -53,8 +53,8 @@ Statyczne biblioteki lib5250.
 
 %build
 %{__libtoolize}
-aclocal
-autoheader
+%{__aclocal}
+%{__autoheader}
 %{__automake}
 %{__autoconf}
 CFLAGS="%{rpmcflags} -I%{_includedir}/ncurses"
