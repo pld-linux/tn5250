@@ -54,6 +54,7 @@ Statyczne biblioteki lib5250.
 %patch1 -p1
 
 %build
+rm -f missing
 %{__libtoolize}
 %{__aclocal}
 %{__autoheader}
@@ -85,7 +86,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog INSTALL NEWS README* TODO
+%doc AUTHORS ChangeLog NEWS README* TODO
 %attr(755,root,root) %{_bindir}/*5250
 %attr(755,root,root) %{_bindir}/*5250d
 %attr(755,root,root) %{_bindir}/tn3270d
