@@ -1,8 +1,8 @@
 Summary:	5250 Telnet protocol and Terminal
 Summary(pl):	Obs³uga protoko³u i terminal Telnet 5250
 Name:		tn5250
-Version:	0.16.4
-Release:	2
+Version:	0.16.5
+Release:	1
 License:	GPL
 Group:		Applications/Networking
 Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/tn5250/%{name}-%{version}.tar.gz
@@ -12,7 +12,6 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	ncurses-devel
-Requires(post):	/sbin/ldconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -73,27 +72,26 @@ install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
 install -D linux/5/5250 $RPM_BUILD_ROOT%{_datadir}/terminfo/5/5250
 install -D linux/x/xterm-5250 $RPM_BUILD_ROOT%{_datadir}/terminfo/x/xterm-5250
 
+mv -f linux/README README.linux
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
-%post
-/usr/bin/tic %{_datadir}/%{name}/5250.terminfo >/dev/null 2>&1
-/sbin/ldconfig
-
+%post	-p /sbin/ldconfig
 %postun -p /sbin/ldconfig
 
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog INSTALL NEWS README* TODO linux/README
+%doc AUTHORS ChangeLog INSTALL NEWS README* TODO
 %attr(755,root,root) %{_bindir}/*5250
 %attr(755,root,root) %{_bindir}/*5250d
 %attr(755,root,root) %{_bindir}/tn3270d
-%attr(755,root,root) %{_bindir}/scs2ascii
+%attr(755,root,root) %{_bindir}/scs2*
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 %{_datadir}/%{name}
 %{_datadir}/terminfo/5/*
 %{_datadir}/terminfo/x/*
-%{_mandir}/man1/*
+%{_mandir}/man[15]/*
 
 %files devel
 %defattr(644,root,root,755)
