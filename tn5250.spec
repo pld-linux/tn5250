@@ -1,13 +1,12 @@
 Summary:	5250 Telnet protocol and Terminal
 Summary(pl):	Obs³uga protoko³u i terminal Telnet 5250
 Name:		tn5250
-Version:	0.16.1
-Release:	3
+Version:	0.16.4
+Release:	1
 License:	GPL
 Group:		Applications/Networking
 Source0:	ftp://ftp.sourceforge.net/pub/sourceforge/tn5250/%{name}-%{version}.tar.gz
-Patch0:		%{name}-updates_to_0.16.1.patch
-Patch1:		%{name}-ncurses.patch
+Patch0:		%{name}-ncurses.patch
 URL:		http://tn5250.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -51,7 +50,6 @@ Statyczne biblioteki lib5250.
 %prep
 %setup -q
 %patch0 -p1
-%patch1 -p1
 
 %build
 %{__libtoolize}
@@ -63,14 +61,20 @@ CFLAGS="%{rpmcflags} -I%{_includedir}/ncurses"
 %configure
 %{__make}
 
+cd linux
+tic 5250.terminfo -o .
+
 %install
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 
-install linux/5250.tcap $RPM_BUILD_ROOT%{_datadir}/%{name}
-install linux/5250.terminfo $RPM_BUILD_ROOT%{_datadir}/%{name}
+#install linux/5250.tcap $RPM_BUILD_ROOT%{_datadir}/%{name}
+#install linux/5250.terminfo $RPM_BUILD_ROOT%{_datadir}/%{name}
+install -D linux/5/5250 $RPM_BUILD_ROOT%{_datadir}/terminfo/5/5250
+install -D linux/x/xterm-5250 $RPM_BUILD_ROOT%{_datadir}/terminfo/x/xterm-5250
+
 #install linux/*.map $RPM_BUILD_ROOT%{_datadir}/%{name}
 #install Xdefaults $RPM_BUILD_ROOT%{_datadir}/%{name}/xt5250.keys
 
@@ -92,6 +96,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{_bindir}/scs2ascii
 %attr(755,root,root) %{_libdir}/lib*.so.*.*
 %{_datadir}/%{name}
+%{_datadir}/terminfo/5/*
+%{_datadir}/terminfo/x/*
 %{_mandir}/man1/*
 
 %files devel
