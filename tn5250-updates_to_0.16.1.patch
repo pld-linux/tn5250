@@ -1,0 +1,437 @@
+diff -ur ../tn5250-0.16.1/ChangeLog ./ChangeLog
+--- ../tn5250-0.16.1/ChangeLog	Tue Dec 19 20:44:09 2000
++++ ./ChangeLog	Tue Jan 23 14:17:27 2001
+@@ -1,7 +1,24 @@
++2001-01-23 Scott Klement <klemscot@klements.com>
++- Wired Field+ to C-x in cursesterm.c
++- Made keys to exit FER state match those on an IBM 3487
++- Fixed Field- in "numeric only" field.  Prior to this fix, instead of 
++   changing the sign bit, it was adding a zero with a negative sign
++   bit ('}').  Effectively, hitting 1<FIELD-> now gives -1 instead of
++   -10 in these "numeric only" fields.
++
++2001-01-18 Scott Klement <klemscot@klements.com>
++- Fix for sign not being set when field minus / field plus pressed in an
++  auto-enter field.
++
++2000-12-22 Jay 'Eraserhead' Felice <jfelice@cronosys.com>
++- Applied patch from Scott Klement for lp5250d stability.
++- Applied patch from Scott for using config-file method for lp5250d in 0.16.x.
++
+ 2000-12-19 Jay 'Eraserhead' Felice <jfelice@cronosys.com>
+ - Okay, really applied second patch from Dave McKenzie *sigh*
+ - Applied patch from Carey Evans to fix option parsing in xt5250.
+ - Changed src/Makefile.am for compatibility with robodoc 3.2.2.
++- Released 0.16.1
+ 
+ 2000-12-06 Jay 'Eraserhead' Felice <jfelice@cronosys.com>
+ - Fixed text of LGPL exception clause in src/*.[ch]
+diff -ur ../tn5250-0.16.1/src/cursesterm.c ./src/cursesterm.c
+--- ../tn5250-0.16.1/src/cursesterm.c	Tue Dec 19 19:35:58 2000
++++ ./src/cursesterm.c	Tue Jan 23 14:17:28 2001
+@@ -193,7 +193,7 @@
+    { K_RESET,           "\022" }, /* CTRL R */
+    { K_TESTREQ,         "\024" }, /* CTRL T */
+    { K_ROLLDN,          "\025" }, /* CTRL U */
+-   { K_FIELDEXIT,       "\030" }, /* CTRL X */
++   { K_FIELDPLUS,       "\030" }, /* CTRL X */
+ 
+    /* ASCII DEL is not correctly reported as the DC key in some
+     * termcaps */
+@@ -741,7 +741,7 @@
+       case K_CTRL('U'):
+ 	 return K_ROLLDN;
+       case K_CTRL('X'):
+-	 return K_FIELDEXIT;
++	 return K_FIELDPLUS;
+ 
+       case K_CTRL('Q'):
+ 	 This->data->quit_flag = 1;
+diff -ur ../tn5250-0.16.1/src/display.c ./src/display.c
+--- ../tn5250-0.16.1/src/display.c	Wed Dec  6 13:39:22 2000
++++ ./src/display.c	Tue Jan 23 14:17:28 2001
+@@ -894,6 +894,13 @@
+ 	 tn5250_display_indicator_clear (This, TN5250_DISPLAY_IND_FER);
+ 	 return;
+ 
++      case K_UP:
++      case K_DOWN:
++      case K_RIGHT:
++	 tn5250_display_indicator_clear (This, TN5250_DISPLAY_IND_FER);
++	 break;
++
++      case K_ENTER:
+       case K_FIELDEXIT:
+       case K_FIELDMINUS:
+       case K_FIELDPLUS:
+@@ -1029,31 +1036,28 @@
+    }
+ }
+ 
+-/****f* lib5250/tn5250_display_kf_field_exit
++/****f* lib5250/tn5250_display_field_pad_and_adjust
+  * NAME
+- *    tn5250_display_kf_field_exit
++ *    tn5250_display_field_pad_and_adjust
+  * SYNOPSIS
+- *    tn5250_display_kf_field_exit (This);
++ *    tn5250_display_field_pad_and_adjust(This, field);
+  * INPUTS
+  *    Tn5250Display *      This       - 
++ *    Tn5250Display *      field      -
+  * DESCRIPTION
+- *    Process a field exit function.
++ *    This nulls out the remainder of the field (after the
++ *    cursor position) except for the +/- sign, and then right
++ *    adjusts the field.  Does NOT do auto-enter, and does NOT
++ *    advance to the next field.
+  *****/
+-void tn5250_display_kf_field_exit(Tn5250Display * This)
++void tn5250_display_field_pad_and_adjust(Tn5250Display * This, Tn5250Field *field)
+ {
+-   Tn5250Field *field;
+    unsigned char *data;
+    int i, l;
+ 
+-   field = tn5250_display_current_field(This);
+-   if (field == NULL || tn5250_field_is_bypass(field)) {
+-      tn5250_display_inhibit(This);
+-      return;
+-   }
+-
+    /* NUL out remainder of field from cursor position.  For signed numeric
+-    * fields, we do *not* want to null out the sign position - this is what
+-    * Field+ and Field- are for.  We do not do this when the FER indicator
++    * fields, we do *not* want to null out the sign position - Field+ and
++    * Field- will do this for us.  We do not do this when the FER indicator
+     * is set. */
+    if ((tn5250_display_indicators (This) & TN5250_DISPLAY_IND_FER) == 0) {
+       data = tn5250_display_field_data (This, field);
+@@ -1068,6 +1072,33 @@
+ 
+    tn5250_display_field_adjust(This, field);
+ 
++}
++
++
++/****f* lib5250/tn5250_display_kf_field_exit
++ * NAME
++ *    tn5250_display_kf_field_exit
++ * SYNOPSIS
++ *    tn5250_display_kf_field_exit (This);
++ * INPUTS
++ *    Tn5250Display *      This       - 
++ * DESCRIPTION
++ *    Process a field exit function.
++ *****/
++void tn5250_display_kf_field_exit(Tn5250Display * This)
++{
++   Tn5250Field *field;
++   unsigned char *data;
++   int i, l;
++
++   field = tn5250_display_current_field(This);
++   if (field == NULL || tn5250_field_is_bypass(field)) {
++      tn5250_display_inhibit(This);
++      return;
++   }
++
++   tn5250_display_field_pad_and_adjust ( This, field );
++
+    if (tn5250_field_is_auto_enter(field)) {
+       tn5250_display_do_aidkey (This, TN5250_SESSION_AID_ENTER);
+       return;
+@@ -1094,20 +1125,33 @@
+ 
+    TN5250_LOG (("Field+ entered.\n"));
+ 
+-   /* NOTE: Field+ should act like field exit on a non-numeric field. */
+-   tn5250_display_kf_field_exit(This);
+-   
+    field = tn5250_display_current_field (This);
+-   if (field == NULL || 
+-	 (tn5250_field_type(field) != TN5250_FIELD_SIGNED_NUM) &&
+-	 (tn5250_field_type(field) != TN5250_FIELD_NUM_ONLY))
++   if (field == NULL || tn5250_field_is_bypass(field)) {
++      tn5250_display_inhibit(This);
+       return;
++   }
++
++   tn5250_display_field_pad_and_adjust ( This, field );
++   
++   /* NOTE: Field+ should act like field exit on a non-numeric field. */
++   if (field != NULL && 
++	 (tn5250_field_type(field) == TN5250_FIELD_SIGNED_NUM) ||
++	 (tn5250_field_type(field) == TN5250_FIELD_NUM_ONLY)) {
++
++        /* We don't do anything for number only fields.  For signed numeric
++         * fields, we change the sign position to a '+'. */
++        data = tn5250_display_field_data (This, field);
++        if (tn5250_field_type(field) != TN5250_FIELD_NUM_ONLY)
++           data[tn5250_field_length (field) - 1] = 0;
++   }
++
++   if (tn5250_field_is_auto_enter(field)) {
++       tn5250_display_do_aidkey (This, TN5250_SESSION_AID_ENTER);
++       return;
++   }
++
++   tn5250_display_set_cursor_next_field (This);
+ 
+-   /* We don't do anything for number only fields.  For signed numeric
+-    * fields, we change the sign position to a '+'. */
+-   data = tn5250_display_field_data (This, field);
+-   if (tn5250_field_type(field) != TN5250_FIELD_NUM_ONLY)
+-      data[tn5250_field_length (field) - 1] = 0;
+ }
+ 
+ /****f* lib5250/tn5250_display_kf_field_minus
+@@ -1129,18 +1173,19 @@
+    TN5250_LOG (("Field- entered.\n"));
+    
+    field = tn5250_display_current_field (This);
+-   if (field == NULL || 
+-	 (tn5250_field_type(field) != TN5250_FIELD_SIGNED_NUM) &&
++   if (field == NULL ||
++         (tn5250_field_type(field) != TN5250_FIELD_SIGNED_NUM) &&
+ 	 (tn5250_field_type(field) != TN5250_FIELD_NUM_ONLY)) {
+       /* FIXME: Explain why to the user. */
+       tn5250_display_inhibit(This);
+       return;
+    }
+ 
+-   tn5250_display_kf_field_exit(This);
++   tn5250_display_field_pad_and_adjust ( This, field );
+ 
+    /* For numeric only fields, we shift the data one character to the
+-    * left and insert an ebcdic '}' in the rightmost position.  For
++    * left and change the zone to negative.  i.e. 0xf0 becomes 0xd0,
++    * 0xf1 becomes 0xd1, etc.  in the rightmost position.  For
+     * signed numeric fields, we change the sign position to a '-'. */
+    data = tn5250_display_field_data (This, field);
+    if (tn5250_field_type(field) == TN5250_FIELD_NUM_ONLY) {
+@@ -1148,13 +1193,18 @@
+ 	 /* FIXME: Explain why to the user. */
+ 	 tn5250_display_inhibit(This);
+       } else {
+-	 int i;
+-	 for (i = 0; i < tn5250_field_length(field) - 1; i++)
+-	    data[i] = data[i+1];
+-	 data[tn5250_field_length (field) - 1] = tn5250_char_map_to_remote (This->map, '}');
++         int i = tn5250_field_length (field) - 1;
++	 if (data[i]&0x20) data[i]&=0xDF;
+       }
+    } else
+       data[tn5250_field_length (field) - 1] = tn5250_char_map_to_remote (This->map, '-');
++
++   if (tn5250_field_is_auto_enter(field)) {
++      tn5250_display_do_aidkey (This, TN5250_SESSION_AID_ENTER);
++      return;
++   }
++
++   tn5250_display_set_cursor_next_field (This);
+ }
+ 
+ /****f* lib5250/tn5250_display_do_aidkey
+diff -ur ../tn5250-0.16.1/src/lp5250d.c ./src/lp5250d.c
+--- ../tn5250-0.16.1/src/lp5250d.c	Wed Dec  6 13:39:23 2000
++++ ./src/lp5250d.c	Fri Dec 22 13:23:45 2000
+@@ -41,122 +41,107 @@
+ 
+ Tn5250PrintSession *printsess = NULL;
+ Tn5250Stream *stream = NULL;
+-
+-char remotehost[20];
+-char sessionname[20];
+-char transformname[20];
+-char outputcommand[30];
+-char *mapname = "37";
+-char logname[20] = "";
++Tn5250Config *config = NULL;
+ 
+ int main(int argc, char *argv[])
+ {
+-   
+ 
+-   if (parse_options(argc, argv) < 0)
+-      syntax();
++   config = tn5250_config_new ();
++   if (tn5250_config_load_default (config) == -1) {
++        tn5250_config_unref(config);
++        exit (1);  
++   }
++   if (tn5250_config_parse_argv (config, argc, argv) == -1) {
++       tn5250_config_unref(config);
++       syntax();  
++   }
++
++   if (tn5250_config_get (config, "help")) 
++       syntax();
++   else if (tn5250_config_get (config, "version")) {
++       printf ("tn5250 version %s\n", version_string);
++       exit (0);
++   }
++   else if (!tn5250_config_get (config, "host"))   
++       syntax();
++
+ 
+     if (tn5250_daemon(0,0,0) < 0)
+     {
+         perror("tn5250_daemon");
+         exit(2);
+-    }
++    } 
+ 
+ #ifndef NDEBUG
+-   if(strlen(logname) > 0) {
+-      tn5250_log_open(logname);
++   if(tn5250_config_get (config, "trace")) {
++      tn5250_log_open(tn5250_config_get (config, "trace"));
+       TN5250_LOG(("lp5250d version %s, built on %s\n", version_string, 
+             __DATE__));
++      TN5250_LOG(("host = %s\n", tn5250_config_get (config, "host")));
+    }
+ #endif 
+ 
+     openlog("lp5250d", LOG_PID, LOG_DAEMON);
+-    stream = tn5250_stream_open (remotehost);
++
++    stream = tn5250_stream_open (tn5250_config_get(config, "host"));
+     if(stream == NULL) {
+-       syslog(LOG_INFO, "Couldn't connect to %s", remotehost);
++       syslog(LOG_INFO, "Couldn't connect to %s", 
++		         tn5250_config_get (config,"host"));
++       exit(1);
++    }
++    if (tn5250_stream_config (stream, config) == -1) {
++       syslog(LOG_INFO, "Couldn't connect config to stream?!");
+        exit(1);
+     }
+        
+     printsess = tn5250_print_session_new();
+     tn5250_stream_setenv(stream, "TERM", "IBM-3812-1");
+-    tn5250_stream_setenv(stream, "DEVNAME", sessionname);
++/*    tn5250_stream_setenv(stream, "DEVNAME", sessionname); */
+     tn5250_stream_setenv(stream, "IBMFONT", "12");
+-    syslog(LOG_INFO, "DEVNAME = %s", sessionname);
+-    if (strlen(transformname) > 0) {
+-       syslog(LOG_INFO, "TRANSFORM = %s", transformname);
++    syslog(LOG_INFO, "DEVNAME = %s", tn5250_stream_getenv(stream, "DEVNAME"));
++    if (tn5250_stream_getenv(stream, "IBMMFRTYPMDL")) {
++       syslog(LOG_INFO, "TRANSFORM = %s", 
++                     tn5250_stream_getenv(stream, "IBMMFRTYPMDL"));
+        tn5250_stream_setenv(stream, "IBMTRANSFORM", "1");
+-       tn5250_stream_setenv(stream, "IBMMFRTYPMDL", transformname);
+     } else
+        tn5250_stream_setenv(stream, "IBMTRANSFORM", "0");
+     tn5250_print_session_set_fd(printsess, tn5250_stream_socket_handle(stream));
+     tn5250_print_session_set_stream(printsess, stream);
+-    tn5250_print_session_set_char_map(printsess, mapname);
+-    tn5250_print_session_set_output_command(printsess, outputcommand);
++    if (tn5250_config_get (config, "map")) {
++         tn5250_print_session_set_char_map(printsess, 
++                  tn5250_config_get (config, "map"));
++    } else {
++         tn5250_print_session_set_char_map(printsess, "37");
++    }
++    if (tn5250_config_get (config, "outputcommand")) 
++         tn5250_print_session_set_output_command(printsess, 
++                 tn5250_config_get (config, "outputcommand"));
++    else
++         tn5250_print_session_set_output_command(printsess, 
++                 "scs2ascii|lpr");
++
+     tn5250_print_session_main_loop(printsess);
+ 
+     tn5250_print_session_destroy(printsess);
+     tn5250_stream_destroy (stream);
++    if (config!=NULL)
++          tn5250_config_unref (config);
+  #ifndef NDEBUG
+     tn5250_log_close();
+ #endif 
+     return 0;
+ }
+ 
+-static int parse_options(int argc, char *argv[])
+-{
+-   int arg;
+-   
+-   while ((arg = getopt(argc, argv, "t:m:s:T:P:Vwy:")) != EOF) {
+-      switch (arg) {
+-#ifndef NDEBUG
+-      case 't':
+-         strcpy(logname,optarg);
+-         break;
+-#endif         
+-      case 'm':
+-	 mapname = optarg;
+-	 break;
+-
+-      case 'P':
+-	 strcpy(outputcommand,optarg);
+-	 break;
+-
+-      case 's':
+-	 strcpy(sessionname,optarg);
+-	 break;
+-
+-      case 'T':
+-	 strcpy(transformname,optarg);
+-	 break;
+-
+-      case 'V':
+-	 printf("tn5250 version %s\n\n", version_string);
+-	 exit(0);
+-	 break;
+-
+-      case ':':
+-	 return -1;
+-      }
+-   }
+-
+-   if (optind >= argc)
+-      return -1;
+-   strcpy(remotehost,argv[optind++]);
+-   if (optind != argc)
+-      return -1;
+-   return 0;
+-}
+-
+ static void syntax()
+ {
+    printf("Usage:  lp5250d [options] host[:port]\n"
+ 	  "Options:\n"
+-	  "\t-t name	 specify FULL path to log file\n"
+-	  "\t-m map      specify translation map\n"
+-	  "\t-s name     specify session name\n"
+-	  "\t-T name     specify host print transform\n"
+-	  "\t-P cmd      specify the print output command\n"
+-	  "\t-V          display version\n");
++	  "\ttrace=FILE                 specify FULL path to log file\n"
++	  "\tmap=NAME                   specify translation map\n"
++	  "\tenv.DEVNAME=NAME           specify session name\n"
++	  "\tenv.IBMMFRTYPMDL=NAME      specify host print transform name\n"
++	  "\toutputcommand=CMD          specify the print output command\n"
++	  "\t+/-version                 display version\n");
+ 
+    exit (255);
+ }
+diff -ur ../tn5250-0.16.1/src/printsession.c ./src/printsession.c
+--- ../tn5250-0.16.1/src/printsession.c	Wed Dec  6 13:39:23 2000
++++ ./src/printsession.c	Fri Dec 22 13:10:17 2000
+@@ -299,6 +299,14 @@
+ 	       if (This->rec != NULL)
+ 	          tn5250_record_destroy(This->rec);
+ 	       This->rec = tn5250_stream_get_record(This->stream);
++
++               if (tn5250_record_opcode(This->rec)
++                   == TN5250_RECORD_OPCODE_CLEAR)
++               {
++                  syslog(LOG_INFO, "Clearing print buffers");
++                  continue;
++               }
++
+ 	       tn5250_stream_send_packet(This->stream, 0,
+ 		     TN5250_RECORD_FLOW_CLIENTO,
+ 		     TN5250_RECORD_H_NONE,

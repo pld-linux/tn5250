@@ -1,0 +1,13 @@
+--- tn5250-0.16.1/configure.in~	Wed Dec 20 02:40:42 2000
++++ tn5250-0.16.1/configure.in	Tue Oct 16 17:40:11 2001
+@@ -77,8 +77,8 @@
+ 			AC_MSG_ERROR([** You need a curses-compatible library installed.])
+ 		fi
+ 	fi
+-	AC_CHECK_HEADERS(ncurses.h curses.h,break)
+-	if test "$ac_cv_header_ncurses_h" != yes -a "$ac_cv_header_curses_h" != yes
++	AC_CHECK_HEADERS(ncurses/ncurses.h curses.h,break)
++	if test "$ac_cv_header_ncurses_ncurses_h" != yes -a "$ac_cv_header_curses_h" != yes
+ 	then
+ 		AC_MSG_ERROR([** Can't find ncurses.h or curses.h **])
+ 	fi
