@@ -1,11 +1,13 @@
---- tn5250-0.16.5/configure.in.orig	Fri Oct 11 15:05:23 2002
-+++ tn5250-0.16.5/configure.in	Fri Oct 11 15:15:56 2002
-@@ -168,7 +168,7 @@
+--- tn5250-0.17.2/configure.in.orig	2005-04-24 22:14:57.497341584 +0200
++++ tn5250-0.17.2/configure.in	2005-04-24 22:16:25.594948712 +0200
+@@ -139,8 +139,8 @@
+ fi
  
  dnl ** Check for libraries
- AC_CHECK_LIB(socket, main)
+-AC_CHECK_LIB(socket, main)
 -AC_CHECK_LIB(nsl, main)
-+AC_CHECK_FUNC(gethostbyname, [], [AC_CHECK_LIB(nsl, gethostbyname)])
- 
++AC_SEARCH_LIBS(socket, socket)
++AC_SEARCH_LIBS(gethostbyname, nsl)
+  
  dnl **
- dnl ** Check for OpenSSL library & associated crypto library
+ dnl ** Check for OpenSSL include files.
