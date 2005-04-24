@@ -1,12 +1,13 @@
+# TODO: python binding
 Summary:	5250 Telnet protocol and Terminal
 Summary(pl):	Obs³uga protoko³u i terminal Telnet 5250
 Name:		tn5250
-Version:	0.16.5
+Version:	0.17.2
 Release:	1
 License:	GPL
 Group:		Applications/Networking
 Source0:	http://dl.sourceforge.net/tn5250/%{name}-%{version}.tar.gz
-# Source0-md5:	2f9ef4509198e96bb184577fdddfce6d
+# Source0-md5:	6cb3c339d0bdaea605496ec366adb761
 Patch0:		%{name}-ncurses.patch
 Patch1:		%{name}-no_libnsl.patch
 URL:		http://tn5250.sourceforge.net/
@@ -29,7 +30,9 @@ i emulator terminala 5250.
 Summary:	Development tools for 5250 protocol
 Summary(pl):	Pakiet dla programisty protoko³u 5250
 Group:		Development/Libraries
-Requires:	%{name} = %{version}
+Requires:	%{name} = %{version}-%{release}
+Requires:	ncurses-devel
+Requires:	openssl-devel >= 0.9.7d
 
 %description devel
 Header files to use lib5250.
@@ -41,7 +44,7 @@ Pliki nag³ówkowe do korzystania z lib5250.
 Summary:	Static libraries for 5250 protocol
 Summary(pl):	Statyczne biblioteki do protoko³u 5250
 Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}
+Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Static libraries to use lib5250.
@@ -55,7 +58,6 @@ Statyczne biblioteki lib5250.
 %patch1 -p1
 
 %build
-rm -f missing
 %{__libtoolize}
 %{__aclocal}
 %{__autoheader}
@@ -72,7 +74,8 @@ tic 5250.terminfo -o .
 rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT%{_datadir}/%{name}
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
 
 install -D linux/5/5250 $RPM_BUILD_ROOT%{_datadir}/terminfo/5/5250
 install -D linux/x/xterm-5250 $RPM_BUILD_ROOT%{_datadir}/terminfo/x/xterm-5250
@@ -89,10 +92,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README* TODO
 %attr(755,root,root) %{_bindir}/*5250
-%attr(755,root,root) %{_bindir}/*5250d
-%attr(755,root,root) %{_bindir}/tn3270d
+%attr(755,root,root) %{_bindir}/lp5250d
 %attr(755,root,root) %{_bindir}/scs2*
-%attr(755,root,root) %{_libdir}/lib*.so.*.*
+%attr(755,root,root) %{_libdir}/lib5250.so.*.*.*
 %{_datadir}/%{name}
 %{_datadir}/terminfo/5/*
 %{_datadir}/terminfo/x/*
@@ -100,12 +102,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(644,root,root,755)
-%{_libdir}/lib*.la
-%attr(755,root,root) %{_libdir}/lib*.so
-%attr(755,root,root) %{_bindir}/*-config
-%{_includedir}/*
-%{_aclocaldir}/*
+%attr(755,root,root) %{_bindir}/tn5250-config
+%attr(755,root,root) %{_libdir}/lib5250.so
+%{_libdir}/lib5250.la
+%{_includedir}/tn5250.h
+%{_includedir}/tn5250
+%{_aclocaldir}/tn5250.m4
+%{_pkgconfigdir}/tn5250.pc
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/*.a
+%{_libdir}/lib5250.a
