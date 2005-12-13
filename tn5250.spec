@@ -63,7 +63,7 @@ Statyczne biblioteki lib5250.
 %{__autoheader}
 %{__automake}
 %{__autoconf}
-CFLAGS="%{rpmcflags} -I%{_includedir}/ncurses"
+CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
 %configure
 %{__make}
 
