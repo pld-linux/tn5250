@@ -1,6 +1,6 @@
 # TODO: python binding
 Summary:	5250 Telnet protocol and Terminal
-Summary(pl.UTF-8):   Obsługa protokołu i terminal Telnet 5250
+Summary(pl.UTF-8):	Obsługa protokołu i terminal Telnet 5250
 Name:		tn5250
 Version:	0.17.2
 Release:	1
@@ -28,7 +28,7 @@ i emulator terminala 5250.
 
 %package devel
 Summary:	Development tools for 5250 protocol
-Summary(pl.UTF-8):   Pakiet dla programisty protokołu 5250
+Summary(pl.UTF-8):	Pakiet dla programisty protokołu 5250
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	ncurses-devel
@@ -42,7 +42,7 @@ Pliki nagłówkowe do korzystania z lib5250.
 
 %package static
 Summary:	Static libraries for 5250 protocol
-Summary(pl.UTF-8):   Statyczne biblioteki do protokołu 5250
+Summary(pl.UTF-8):	Statyczne biblioteki do protokołu 5250
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
