@@ -1,6 +1,6 @@
 # TODO: python binding
 Summary:	5250 Telnet protocol and Terminal
-Summary(pl):	Obs≥uga protoko≥u i terminal Telnet 5250
+Summary(pl.UTF-8):   Obs≈Çuga protoko≈Çu i terminal Telnet 5250
 Name:		tn5250
 Version:	0.17.2
 Release:	1
@@ -22,13 +22,13 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 tn5250 is an implementation of the 5250 Telnet protocol. It provide
 5250 library and 5250 terminal emulation.
 
-%description -l pl
-tn5250 to implementacja protoko≥u Telnet 5250. Zawiera bibliotekÍ 5250
+%description -l pl.UTF-8
+tn5250 to implementacja protoko≈Çu Telnet 5250. Zawiera bibliotekƒô 5250
 i emulator terminala 5250.
 
 %package devel
 Summary:	Development tools for 5250 protocol
-Summary(pl):	Pakiet dla programisty protoko≥u 5250
+Summary(pl.UTF-8):   Pakiet dla programisty protoko≈Çu 5250
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 Requires:	ncurses-devel
@@ -37,19 +37,19 @@ Requires:	openssl-devel >= 0.9.7d
 %description devel
 Header files to use lib5250.
 
-%description devel -l pl
-Pliki nag≥Ûwkowe do korzystania z lib5250.
+%description devel -l pl.UTF-8
+Pliki nag≈Ç√≥wkowe do korzystania z lib5250.
 
 %package static
 Summary:	Static libraries for 5250 protocol
-Summary(pl):	Statyczne biblioteki do protoko≥u 5250
+Summary(pl.UTF-8):   Statyczne biblioteki do protoko≈Çu 5250
 Group:		Development/Libraries
 Requires:	%{name}-devel = %{version}-%{release}
 
 %description static
 Static libraries to use lib5250.
 
-%description static -l pl
+%description static -l pl.UTF-8
 Statyczne biblioteki lib5250.
 
 %prep
