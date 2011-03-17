@@ -2,14 +2,12 @@
 Summary:	5250 Telnet protocol and Terminal
 Summary(pl.UTF-8):	Obsługa protokołu i terminal Telnet 5250
 Name:		tn5250
-Version:	0.17.3
-Release:	3
+Version:	0.17.4
+Release:	1
 License:	GPL
 Group:		Applications/Networking
-Source0:	http://dl.sourceforge.net/tn5250/%{name}-%{version}.tar.gz
-# Source0-md5:	f8c454334c63ed7b100e0b12160d93ea
-Patch0:		%{name}-ncurses.patch
-Patch1:		%{name}-no_libnsl.patch
+Source0:	http://downloads.sourceforge.net/tn5250/%{name}-%{version}.tar.gz
+# Source0-md5:	d1eb7c5a2e15cd2f43a1c115e2734153
 URL:		http://tn5250.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -54,8 +52,6 @@ Statyczne biblioteki lib5250.
 
 %prep
 %setup -q
-%patch0 -p1
-%patch1 -p1
 
 %build
 %{__libtoolize}
@@ -91,24 +87,31 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog NEWS README* TODO
-%attr(755,root,root) %{_bindir}/*5250
+%attr(755,root,root) %{_bindir}/5250keys
 %attr(755,root,root) %{_bindir}/lp5250d
-%attr(755,root,root) %{_bindir}/scs2*
+%attr(755,root,root) %{_bindir}/scs2ascii
+%attr(755,root,root) %{_bindir}/scs2pdf
+%attr(755,root,root) %{_bindir}/scs2ps
+%attr(755,root,root) %{_bindir}/tn5250
+%attr(755,root,root) %{_bindir}/xt5250
 %attr(755,root,root) %{_libdir}/lib5250.so.*.*.*
+%attr(755,root,root) %ghost %{_libdir}/lib5250.so.0
 %{_datadir}/%{name}
-%{_datadir}/terminfo/5/*
-%{_datadir}/terminfo/x/*
-%{_mandir}/man[15]/*
+%{_datadir}/terminfo/5/5250
+%{_datadir}/terminfo/x/xterm-5250
+%{_mandir}/man1/lp5250d.1*
+%{_mandir}/man1/scs2ascii.1*
+%{_mandir}/man1/scs2pdf.1*
+%{_mandir}/man1/scs2ps.1*
+%{_mandir}/man1/tn5250.1*
+%{_mandir}/man5/tn5250rc.5*
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/tn5250-config
 %attr(755,root,root) %{_libdir}/lib5250.so
 %{_libdir}/lib5250.la
 %{_includedir}/tn5250.h
 %{_includedir}/tn5250
-%{_aclocaldir}/tn5250.m4
-%{_pkgconfigdir}/tn5250.pc
 
 %files static
 %defattr(644,root,root,755)
