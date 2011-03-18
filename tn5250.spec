@@ -9,7 +9,7 @@ Group:		Applications/Networking
 Source0:	http://downloads.sourceforge.net/tn5250/%{name}-%{version}.tar.gz
 # Source0-md5:	d1eb7c5a2e15cd2f43a1c115e2734153
 URL:		http://tn5250.sourceforge.net/
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	ncurses-devel
@@ -17,7 +17,7 @@ BuildRequires:	openssl-devel >= 0.9.7d
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-tn5250 is an implementation of the 5250 Telnet protocol. It provide
+tn5250 is an implementation of the 5250 Telnet protocol. It provides
 5250 library and 5250 terminal emulation.
 
 %description -l pl.UTF-8
