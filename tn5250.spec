@@ -1,4 +1,4 @@
-# TODO: python binding
+# TODO: python binding (disabled in sources as of 0.17.4)
 Summary:	5250 Telnet protocol and Terminal
 Summary(pl.UTF-8):	Obsługa protokołu i terminal Telnet 5250
 Name:		tn5250
@@ -60,7 +60,8 @@ Statyczne biblioteki lib5250.
 %{__automake}
 %{__autoconf}
 CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
-%configure
+%configure \
+	--with-python
 %{__make}
 
 cd linux
