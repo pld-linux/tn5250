@@ -1,0 +1,36 @@
+--- tn5250-0.17.4/lib5250/sslstream.c~	2008-11-21 09:12:21.000000000 +0100
++++ tn5250-0.17.4/lib5250/sslstream.c	2013-12-06 08:11:12.765608943 +0100
+@@ -307,7 +307,7 @@
+ 
+    if (!tn5250_logfile)
+       return;
+-   fprintf(tn5250_logfile,ssl_getTelOpt(type=*buf++));
++   fprintf(tn5250_logfile,"%s",ssl_getTelOpt(type=*buf++));
+    switch (c=*buf++) {
+       case IS:
+ 		fputs("<IS>",tn5250_logfile);
+--- tn5250-0.17.4/lib5250/telnetstr.c~	2008-11-21 09:12:21.000000000 +0100
++++ tn5250-0.17.4/lib5250/telnetstr.c	2013-12-06 08:11:43.172275390 +0100
+@@ -282,7 +282,7 @@
+ 
+    if (!tn5250_logfile)
+       return;
+-   fprintf(tn5250_logfile,getTelOpt(type=*buf++));
++   fprintf(tn5250_logfile,"%s",getTelOpt(type=*buf++));
+    switch (c=*buf++) {
+       case IS:
+ 		fputs("<IS>",tn5250_logfile);
+--- tn5250-0.17.4/curses/cursesterm.c~	2008-11-21 09:12:20.000000000 +0100
++++ tn5250-0.17.4/curses/cursesterm.c	2013-12-06 08:12:28.862275059 +0100
+@@ -640,9 +640,9 @@
+       if(This->data->is_xterm) {
+          if (This->data->font_132!=NULL) {
+                if (tn5250_display_width (display)>100)
+-                    printf(This->data->font_132);
++                    printf("%s", This->data->font_132);
+                else
+-                    printf(This->data->font_80);
++                    printf("%s", This->data->font_80);
+          }
+ 	 printf ("\x1b[8;%d;%dt", tn5250_display_height (display)+1,
+ 	       tn5250_display_width (display));

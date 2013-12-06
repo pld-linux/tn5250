@@ -8,6 +8,7 @@ License:	GPL
 Group:		Applications/Networking
 Source0:	http://downloads.sourceforge.net/tn5250/%{name}-%{version}.tar.gz
 # Source0-md5:	d1eb7c5a2e15cd2f43a1c115e2734153
+Patch0:		format-security.patch
 URL:		http://tn5250.sourceforge.net/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -52,6 +53,7 @@ Statyczne biblioteki lib5250.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 %{__libtoolize}
@@ -60,8 +62,7 @@ Statyczne biblioteki lib5250.
 %{__automake}
 %{__autoconf}
 CFLAGS="%{rpmcflags} -I/usr/include/ncurses"
-%configure \
-	--with-python
+%configure
 %{__make}
 
 cd linux
