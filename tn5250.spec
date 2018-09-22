@@ -3,12 +3,13 @@ Summary:	5250 Telnet protocol and Terminal
 Summary(pl.UTF-8):	Obsługa protokołu i terminal Telnet 5250
 Name:		tn5250
 Version:	0.17.4
-Release:	3
+Release:	4
 License:	GPL
 Group:		Applications/Networking
 Source0:	http://downloads.sourceforge.net/tn5250/%{name}-%{version}.tar.gz
 # Source0-md5:	d1eb7c5a2e15cd2f43a1c115e2734153
 Patch0:		format-security.patch
+Patch1:		openssl.patch
 URL:		http://tn5250.sourceforge.net/
 BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
@@ -54,6 +55,7 @@ Statyczne biblioteki lib5250.
 %prep
 %setup -q
 %patch0 -p1
+%patch1 -p1
 
 %build
 %{__libtoolize}
